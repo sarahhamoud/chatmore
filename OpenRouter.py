@@ -342,7 +342,7 @@ elif page == "تنزيل":
     st.markdown("### تنزيل آخر نتيجة")
 
     if not st.session_state.last_result:
-        st.info("لا توجد نتيجة بعد. استخدمي الدردشة أو الأدوات أولاً.")
+        st.info("لا توجد نتيجة بعد. استخدم الدردشة أو الأدوات أولاً.")
     else:
         st.markdown(f"<div class='result'>{st.session_state.last_result}</div>", unsafe_allow_html=True)
         docx = make_docx("Smart AI Assistant — Result", st.session_state.last_result)
@@ -362,6 +362,7 @@ else:
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
 
 
 
