@@ -15,9 +15,9 @@ st.set_page_config(
 )
 
 # =========================
-# CSS (Clean + NO empty rectangles + topbar + toolbar)
+# CSS (Colors + Name + Toolbar + Hide Streamlit default bar)
 # =========================
-st.markdown("""
+st.markdown(r"""
 <style>
 /* RTL + Font */
 html, body, [data-testid="stAppViewContainer"]{
@@ -32,100 +32,75 @@ html, body, [data-testid="stAppViewContainer"]{
   color:#0f172a;
 }
 
-/* Remove Streamlit default separators/extra lines */
+/* Remove dividers */
 hr, [data-testid="stDivider"]{display:none !important;}
 
-/* Remove default “gray blocks” look */
-[data-testid="stToolbar"]{display:none !important;}         /* يخفي شريط ستريم لت الافتراضي */
-[data-testid="stStatusWidget"]{display:none !important;}
-[data-testid="stDecoration"]{display:none !important;}
+/* =========================
+   ✅ HIDE STREAMLIT DEFAULT TOP BAR (Run/Share/Menu)
+========================= */
+header[data-testid="stHeader"]{ display:none !important; }
+[data-testid="stToolbar"]{ display:none !important; }
+[data-testid="stShareButton"]{ display:none !important; }
 
-/* Layout spacing (so topbar doesn't block view) */
+/* Remove top padding that Streamlit leaves */
+[data-testid="stAppViewContainer"]{
+  padding-top: 0rem !important;
+}
+
+/* Layout spacing so our topbar doesn't block */
 .block-container{
   max-width: 980px;
-  padding-top: 6.2rem;    /* مساحة للشريط العلوي */
-  padding-bottom: 2.0rem;
+  padding-top: 7.2rem;    /* مساحة للشريط المخصص */
+  padding-bottom: 2rem;
 }
 
 /* =========================
-   TOPBAR - GLASS (Transparent)
+   TOPBAR (Colorful + clear name)
 ========================= */
 .app-topbar{
   position: fixed;
-  top: 10px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   width: min(980px, calc(100% - 18px));
   z-index: 9999;
-/* =========================
-   HIDE STREAMLIT DEFAULT TOP BAR
-   (Run / Share / Menu)
-========================= */
 
-/* الشريط العلوي بالكامل */
-header[data-testid="stHeader"] {
-    display: none !important;
-}
-
-/* شريط الأدوات الصغير (⋮) */
-[data-testid="stToolbar"] {
-    display: none !important;
-}
-
-/* زر Share */
-[data-testid="stShareButton"] {
-    display: none !important;
-}
-
-/* المساحة اللي يتركها الشريط بعد الإخفاء */
-[data-testid="stAppViewContainer"] {
-    padding-top: 0rem !important;
-}
-
-  /* Glass effect */
-  background: rgba(255, 255, 255, 0.45);   /* شفاف */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
+  background: linear-gradient(135deg,#14b8a6,#facc15,#fb923c);
   border-radius: 22px;
-  padding: 12px 16px;
-
-  border: 1px solid rgba(255,255,255,.6);
-  box-shadow: 
-    0 16px 34px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.5);
+  padding: 14px 16px;
+  box-shadow: 0 16px 34px rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.35);
 }
 
-/* Title */
 .app-title{
+  color:#ffffff;
   font-weight: 1000;
-  font-size: 22px;
+  font-size: 23px;
   margin: 0;
-  line-height: 1.2;
-  color: #0f172a;     /* واضح فوق الشفافية */
+  line-height: 1.15;
+  text-shadow: 0 2px 8px rgba(0,0,0,.28);
 }
 
-/* Name */
 .app-sub{
-  margin: 2px 0 0 0;
-  font-size: 15px;
-  font-weight: 900;
-  color: #0f766e;     /* فيروزي هادئ */
+  margin: 4px 0 0 0;
+  font-size: 16px;
+  font-weight: 1000;
+  color: #0f172a;
+  background: rgba(255,255,255,.65);
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
 }
-
-/* Mobile */
-@media (max-widt
-
 
 /* =========================
-   Toolbar (radio horizontal) styled as pills
+   Toolbar (radio as colorful tabs)
 ========================= */
 div[role="radiogroup"]{
   display:flex !important;
   gap: 10px !important;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  margin-top: 10px;
+  justify-content: center;
+  margin: 6px 0 14px 0;
 }
 
 /* Hide radio dot */
@@ -133,19 +108,19 @@ div[role="radiogroup"] label > div:first-child{
   display:none !important;
 }
 
-/* Each pill */
+/* Each tab */
 div[role="radiogroup"] label{
-  background: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.92);
   border: 1px solid rgba(15,23,42,.12);
   border-radius: 14px;
-  padding: 10px 14px;
+  padding: 10px 16px;
   font-weight: 1000;
   font-size: 17px;
   box-shadow: 0 10px 20px rgba(2,6,23,.06);
-  cursor: pointer;
+  cursor:pointer;
 }
 
-/* Selected pill (Streamlit adds aria-checked on input; style via label:has) */
+/* Selected tab */
 div[role="radiogroup"] label:has(input:checked){
   background: linear-gradient(135deg,#14b8a6,#facc15,#fb923c);
   border: none;
@@ -153,14 +128,14 @@ div[role="radiogroup"] label:has(input:checked){
 }
 
 /* =========================
-   Cards + Gradient border (NO empty rectangles)
+   Cards with gradient border
 ========================= */
 .grad-border{
   background: linear-gradient(135deg,#14b8a6,#facc15,#fb923c);
   padding: 3px;
   border-radius: 22px;
   margin-bottom: 14px;
-  box-shadow: 0 14px 30px rgba(20,184,166,.22);
+  box-shadow: 0 14px 30px rgba(20,184,166,.18);
 }
 .grad-inner{
   background:#fff;
@@ -168,7 +143,7 @@ div[role="radiogroup"] label:has(input:checked){
   padding: 16px;
 }
 
-/* Input */
+/* Inputs */
 textarea, input, [data-baseweb="select"] > div{
   border-radius: 16px !important;
   border: 1px solid rgba(0,0,0,.14) !important;
@@ -190,7 +165,7 @@ label{
   border: none;
   background: linear-gradient(135deg,#fb923c,#facc15);
   color:#0f172a;
-  box-shadow: 0 12px 24px rgba(251,146,60,.30);
+  box-shadow: 0 12px 24px rgba(251,146,60,.28);
 }
 
 /* Chat bubbles */
@@ -222,22 +197,22 @@ label{
   line-height: 2.1;
 }
 
-/* Mobile tweaks */
+/* Mobile */
 @media (max-width:520px){
-  .block-container{padding-top: 6.8rem;}
+  .block-container{padding-top: 7.8rem;}
   .app-title{font-size: 20px;}
-  .app-sub{font-size: 14px;}
+  .app-sub{font-size: 15px;}
   div[role="radiogroup"] label{font-size:16px; padding: 9px 12px;}
 }
 </style>
 """, unsafe_allow_html=True)
 
 # =========================
-# Topbar (Name + Toolbar)
+# Topbar
 # =========================
 st.markdown("""
 <div class="app-topbar">
-  <p class="app-title"> Smart AI Assistant</p>
+  <p class="app-title">🤖 Smart AI Assistant</p>
   <p class="app-sub">Sarah Hamoud Hussien</p>
 </div>
 """, unsafe_allow_html=True)
@@ -262,7 +237,7 @@ if "chat" not in st.session_state:
 if "last_result" not in st.session_state:
     st.session_state.last_result = ""
 if "page" not in st.session_state:
-    st.session_state.page = " دردشة"
+    st.session_state.page = "دردشة"
 
 # =========================
 # Helpers
@@ -286,21 +261,22 @@ def make_docx(title, content):
     return bio
 
 # =========================
-# TOOLBAR (clear)
+# Toolbar
 # =========================
 st.session_state.page = st.radio(
     "",
-    [" دردشة", " أدوات", " تنزيل", " إعدادات"],
+    ["دردشة", "أدوات", "تنزيل", "إعدادات"],
     horizontal=True,
     label_visibility="collapsed"
 )
 
-# =========================
-# PAGES
-# =========================
 page = st.session_state.page
 
-if page == " دردشة":
+# =========================
+# Pages
+# =========================
+if page == "دردشة":
+    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### المحادثة")
 
     if not st.session_state.chat:
@@ -313,6 +289,7 @@ if page == " دردشة":
 
     st.markdown('</div></div>', unsafe_allow_html=True)
 
+    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     user_msg = st.text_area("اكتبي رسالتك:", height=140, placeholder="اسألي أي شيء…")
     send = st.button("إرسال")
     st.markdown('</div></div>', unsafe_allow_html=True)
@@ -322,10 +299,9 @@ if page == " دردشة":
             st.warning("رجاءً اكتبي رسالة أولاً.")
         else:
             st.session_state.chat.append({"role": "user", "content": user_msg.strip(), "ts": datetime.now().isoformat()})
-
             with st.spinner("جاري الرد..."):
                 resp = ask_llm([
-                    {"role": "system", "content": "أنت مساعد عربي محترف، واضح ومنظم."},
+                    {"role": "system", "content": "أنت مساعد عربي محترف، واضح ومنظّم."},
                     *[{"role": x["role"], "content": x["content"]} for x in st.session_state.chat[-10:]]
                 ])
                 answer = resp.choices[0].message.content.strip()
@@ -333,7 +309,7 @@ if page == " دردشة":
                 st.session_state.last_result = answer
                 st.rerun()
 
-elif page == " أدوات":
+elif page == "أدوات":
     st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### أدوات NLP")
 
@@ -368,7 +344,7 @@ elif page == " أدوات":
             st.markdown(f"<div class='result'>{result}</div>", unsafe_allow_html=True)
             st.markdown('</div></div>', unsafe_allow_html=True)
 
-elif page == " تنزيل":
+elif page == "تنزيل":
     st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### تنزيل آخر نتيجة")
 
@@ -384,10 +360,9 @@ elif page == " تنزيل":
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             use_container_width=True
         )
-
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-else:  # Settings
+else:
     st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### إعدادات")
     if st.button(" مسح المحادثة", use_container_width=True):
@@ -395,5 +370,3 @@ else:  # Settings
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
-
-
