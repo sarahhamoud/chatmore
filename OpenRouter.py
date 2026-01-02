@@ -4,19 +4,28 @@ from io import BytesIO
 from datetime import datetime
 
 from docx import Document
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-# =========================
-# Page config
-# =========================
-APP_TITLE = st.secrets.get("OPENROUTER_APP_TITLE", "Smart AI Assistant")
-st.set_page_config(page_title=APP_TITLE, page_icon="🤖", layout="centered", initial_sidebar_state="collapsed")
+import arabic_reshaper
+from bidi.algorithm import get_display
+import os
 
 # =========================
-# Styles (RTL + Pro UI + Responsive)
+# Page config (mobile-friendly)
+# =========================
+st.set_page_config(
+    page_title="Smart AI Assistant",
+    page_icon="🤖",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
+# =========================
+# Light Pro RTL UI (bigger fonts)
 # =========================
 st.markdown(
     """
@@ -26,80 +35,100 @@ st.markdown(
         font-family: "Tajawal","Cairo","Tahoma","Arial",sans-serif;
     }
     [data-testid="stAppViewContainer"]{
-        background: radial-gradient(1200px 600px at 10% 10%, rgba(99,102,241,.18), transparent 50%),
-                    radial-gradient(900px 500px at 90% 20%, rgba(16,185,129,.14), transparent 45%),
-                    linear-gradient(180deg, #0b1220 0%, #0a0f1c 100%);
-        color: #e5e7eb;
+        background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 60%, #f2f4f9 100%);
+        color: #0f172a;
     }
-    .block-container{padding-top: 1.2rem; padding-bottom: 2rem; max-width: 920px;}
+    .block-container{
+        padding-top: .8rem;
+        padding-bottom: 2rem;
+        max-width: 900px;
+    }
     @media (max-width: 520px){
         .block-container {padding-left: 1rem; padding-right: 1rem;}
     }
 
-    .card{
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    /* Top bar (sticky) */
+    .topbar{
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background: rgba(255,255,255,.92);
+        border: 1px solid rgba(15,23,42,.08);
         border-radius: 18px;
-        padding: 16px;
+        padding: 10px 12px;
         backdrop-filter: blur(10px);
+        box-shadow: 0 10px 22px rgba(2,6,23,.06);
         margin-bottom: 12px;
     }
-    .badge{
-        display:inline-block; padding: 6px 10px; border-radius: 999px;
-        background: rgba(99,102,241,0.20);
-        border: 1px solid rgba(99,102,241,0.35);
-        font-size: 12px; color: #c7d2fe;
+    .brand{
+        font-weight: 900;
+        font-size: 20px;
+        margin: 0;
+        line-height: 1.2;
     }
+    .sub{
+        margin: 0;
+        font-size: 13px;
+        color: rgba(15,23,42,.70);
+    }
+
+    /* Cards */
+    .card{
+        background: #ffffff;
+        border: 1px solid rgba(15,23,42,.10);
+        box-shadow: 0 12px 26px rgba(2,6,23,.06);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    /* Inputs bigger */
+    textarea, input, [data-baseweb="select"] > div{
+        border-radius: 14px !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(15,23,42,.12) !important;
+        color: #0f172a !important;
+        font-size: 16px !important;
+    }
+
+    label{
+        color:#0f172a !important;
+        font-weight: 800;
+        font-size: 16px !important;
+    }
+
+    /* Buttons */
     .stButton > button{
         width: 100%;
         border-radius: 14px;
-        padding: 0.75rem 1rem;
-        font-weight: 800;
-        border: 1px solid rgba(255,255,255,0.18);
-        background: linear-gradient(135deg, rgba(99,102,241,0.95), rgba(16,185,129,0.92));
+        padding: 0.8rem 1rem;
+        font-weight: 900;
+        border: 1px solid rgba(15,23,42,.12);
+        background: linear-gradient(135deg, #2563eb, #22c55e);
         color: white;
-    }
-    textarea, input, [data-baseweb="select"] > div{
-        border-radius: 14px !important;
-        background: rgba(255,255,255,0.06) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        color: #e5e7eb !important;
-    }
-    label {color:#e5e7eb !important; font-weight: 700;}
-
-    /* Chat bubbles */
-    .chat-wrap{margin-top: 8px;}
-    .bubble{
-        padding: 12px 12px;
-        border-radius: 16px;
-        margin: 8px 0;
-        line-height: 1.85;
-        border: 1px solid rgba(255,255,255,0.12);
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-    .user{
-        background: rgba(99,102,241,0.18);
-        border-color: rgba(99,102,241,0.35);
-    }
-    .bot{
-        background: rgba(16,185,129,0.14);
-        border-color: rgba(16,185,129,0.28);
-    }
-    .meta{
-        opacity: .85;
-        font-size: 12px;
-        margin-top: 4px;
+        font-size: 16px;
     }
 
+    /* Result */
     .result{
-        background: rgba(17,24,39,0.65);
-        border: 1px solid rgba(255,255,255,0.12);
+        background: #f8fafc;
+        border: 1px solid rgba(15,23,42,.10);
         border-radius: 16px;
-        padding: 12px;
+        padding: 14px;
         white-space: pre-wrap;
-        line-height: 1.9;
+        line-height: 2.0;
+        font-size: 16px;
+    }
+
+    .hint{
+        color: rgba(15,23,42,.70);
+        font-size: 14px;
+    }
+
+    /* Make tab labels bigger (mobile) */
+    button[data-baseweb="tab"]{
+        font-size: 15px !important;
+        font-weight: 800 !important;
     }
     </style>
     """,
@@ -107,43 +136,32 @@ st.markdown(
 )
 
 # =========================
-# Secrets / Client (safe)
+# Secrets (SAFE)
 # =========================
 OPENROUTER_API_KEY = st.secrets.get("OPENROUTER_API_KEY", "")
-MODEL_DEFAULT = st.secrets.get("OPENROUTER_MODEL_DEFAULT", "openai/gpt-3.5-turbo")
+OPENROUTER_MODEL = st.secrets.get("OPENROUTER_MODEL_DEFAULT", "openai/gpt-3.5-turbo")
 
 if not OPENROUTER_API_KEY:
-    st.error("⚠️ لم يتم العثور على OPENROUTER_API_KEY داخل Secrets. ضعيه في Streamlit Cloud → Settings → Secrets.")
+    st.error("⚠️ ضعي OPENROUTER_API_KEY داخل Secrets في Streamlit Cloud.")
     st.stop()
 
 client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
 
 # =========================
-# Helpers: clipboard, export
+# Session state
 # =========================
-def clipboard_button(text: str, label: str = "📋 نسخ"):
-    """Copy-to-clipboard using a tiny HTML/JS snippet."""
-    safe = text.replace("\\", "\\\\").replace("`", "\\`")
-    st.components.v1.html(
-        f"""
-        <div style="display:flex; gap:10px;">
-            <button
-              style="
-                width:100%;
-                border-radius:14px;
-                padding:12px 14px;
-                font-weight:800;
-                border:1px solid rgba(255,255,255,0.18);
-                background:rgba(255,255,255,0.06);
-                color:#e5e7eb;
-                cursor:pointer;
-              "
-              onclick="navigator.clipboard.writeText(`{safe}`); this.innerText='✅ تم النسخ'; setTimeout(()=>this.innerText='{label}',1500);"
-            >{label}</button>
-        </div>
-        """,
-        height=60
-    )
+if "chat" not in st.session_state:
+    st.session_state.chat = []
+if "last_result" not in st.session_state:
+    st.session_state.last_result = ""
+
+# =========================
+# Utils: Arabic shaping for PDF
+# =========================
+def shape_ar(text: str) -> str:
+    # reshape + bidi for correct Arabic rendering in LTR canvas
+    reshaped = arabic_reshaper.reshape(text)
+    return get_display(reshaped)
 
 def make_docx(title: str, content: str) -> BytesIO:
     doc = Document()
@@ -155,29 +173,37 @@ def make_docx(title: str, content: str) -> BytesIO:
     bio.seek(0)
     return bio
 
-def make_pdf(title: str, content: str) -> BytesIO:
+def make_pdf_ar(title: str, content: str) -> BytesIO:
     """
-    PDF بسيط. ملاحظة: دعم العربية في PDF يحتاج خط عربي.
-    إذا ما توفر خط عربي، راح يطلع PDF لكن احتمال العربي ما يظهر مضبوط في بعض البيئات.
+    PDF عربي RTL بشكل صحيح:
+    - يستخدم خط عربي إذا موجود: fonts/Amiri-Regular.ttf
+    - يرسم النص بمحاذاة يمين drawRightString
     """
     bio = BytesIO()
     c = canvas.Canvas(bio, pagesize=A4)
     width, height = A4
 
-    # Try register Arabic font if exists (optional)
-    # You can add a font file later to repo and enable it.
-    # Example: put "fonts/Amiri-Regular.ttf" then uncomment below:
-    # pdfmetrics.registerFont(TTFont("Amiri", "fonts/Amiri-Regular.ttf"))
-    # c.setFont("Amiri", 14)
+    # Register Arabic font if available
+    font_path = os.path.join("fonts", "Amiri-Regular.ttf")
+    font_name = "Helvetica"
+    if os.path.exists(font_path):
+        try:
+            pdfmetrics.registerFont(TTFont("Amiri", font_path))
+            font_name = "Amiri"
+        except Exception:
+            font_name = "Helvetica"
 
-    c.setFont("Helvetica", 14)
+    # Title
+    c.setFont(font_name, 16)
     y = height - 60
-    c.drawString(40, y, title[:90])
-    y -= 28
-    c.setFont("Helvetica", 11)
+    c.drawRightString(width - 40, y, shape_ar(title) if font_name == "Amiri" else title)
+    y -= 30
 
-    # Wrap lines
-    max_chars = 95
+    # Body
+    c.setFont(font_name, 12)
+
+    # wrap lines (approx)
+    max_chars = 88
     lines = []
     for line in content.split("\n"):
         line = line.strip()
@@ -192,16 +218,51 @@ def make_pdf(title: str, content: str) -> BytesIO:
     for line in lines:
         if y < 60:
             c.showPage()
-            c.setFont("Helvetica", 11)
+            c.setFont(font_name, 12)
             y = height - 60
-        c.drawString(40, y, line[:120])
-        y -= 16
+
+        draw_text = shape_ar(line) if font_name == "Amiri" else line
+        c.drawRightString(width - 40, y, draw_text)
+        y -= 18
 
     c.save()
     bio.seek(0)
     return bio
 
-def build_prompt(task_name: str, text: str) -> str:
+def clipboard_button(text: str, label: str = "📋 نسخ"):
+    safe = text.replace("\\", "\\\\").replace("`", "\\`")
+    st.components.v1.html(
+        f"""
+        <div>
+          <button
+            style="
+              width:100%;
+              border-radius:14px;
+              padding:12px 14px;
+              font-weight:900;
+              border:1px solid rgba(15,23,42,.12);
+              background:#ffffff;
+              color:#0f172a;
+              cursor:pointer;
+              box-shadow: 0 10px 18px rgba(2,6,23,.06);
+            "
+            onclick="navigator.clipboard.writeText(`{safe}`); this.innerText='✅ تم النسخ'; setTimeout(()=>this.innerText='{label}',1500);"
+          >{label}</button>
+        </div>
+        """,
+        height=56
+    )
+
+def ask_llm(messages):
+    # ثبّت الإعدادات (بدون سلايدر)
+    return client.chat.completions.create(
+        model=OPENROUTER_MODEL,
+        messages=messages,
+        temperature=0.2,
+        max_tokens=700,
+    )
+
+def build_tool_prompt(task_name: str, text: str) -> str:
     if task_name == "تلخيص":
         return f"لخّص النص التالي بالعربية بشكل واضح ومنظم (نقاط + خلاصة):\n\n{text}"
     if task_name == "إعادة صياغة":
@@ -213,83 +274,38 @@ def build_prompt(task_name: str, text: str) -> str:
     return text
 
 # =========================
-# Session state
+# Top bar (no sidebar)
 # =========================
-if "chat" not in st.session_state:
-    st.session_state.chat = []  # list of dicts: {role, content, ts}
-if "last_result" not in st.session_state:
-    st.session_state.last_result = ""
+st.markdown(
+    """
+    <div class="topbar">
+      <p class="brand">🤖 Smart AI Assistant</p>
+      <p class="sub">Chatbot + تلخيص + صياغة + ترجمة + مشاعر + تحميل PDF/Word</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-# =========================
-# Header
-# =========================
-c1, c2 = st.columns([1, 3], vertical_alignment="center")
-with c1:
-    st.image(
-        "https://raw.githubusercontent.com/streamlit/example-app-chatbot/main/icon.png",
-        use_container_width=True
-    )
-with c2:
-    st.markdown(f"## 🤖 {APP_TITLE}")
-    st.markdown("<span class='badge'>Chatbot + تلخيص + صياغة + ترجمة + مشاعر + تحميل PDF/Word</span>", unsafe_allow_html=True)
+# Top navigation with icons (mobile-friendly)
+tab_chat, tab_tools, tab_export, tab_settings = st.tabs(["💬 دردشة", "🧠 أدوات", "⬇️ تنزيل", "⚙️ إعدادات"])
 
 # =========================
-# Sidebar settings
+# TAB: Chat
 # =========================
-with st.sidebar:
-    st.markdown("### ⚙️ إعدادات")
-    model = st.selectbox(
-        "النموذج (OpenRouter):",
-        [
-            MODEL_DEFAULT,
-            "openai/gpt-4o-mini",
-            "openai/gpt-4.1-mini",
-            "anthropic/claude-3.5-sonnet",
-            "google/gemini-1.5-pro",
-            "meta-llama/llama-3.1-70b-instruct",
-        ],
-        index=0
-    )
-    temperature = st.slider("🎛️ الإبداع", 0.0, 1.0, 0.2, 0.1)
-    max_tokens = st.slider("🔢 طول الرد", 200, 1800, 600, 50)
+with tab_chat:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("### 💬 محادثة")
 
-    if st.button("🧹 مسح المحادثة"):
-        st.session_state.chat = []
-        st.session_state.last_result = ""
-        st.rerun()
-
-# =========================
-# Main: Chat + Tools
-# =========================
-st.markdown("<div class='card'>", unsafe_allow_html=True)
-
-mode = st.radio("اختاري الوضع:", ["💬 Chatbot محادثة", "🧠 أدوات NLP"], horizontal=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- CHATBOT MODE ----------
-if mode == "💬 Chatbot محادثة":
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.markdown("### 💬 المحادثة")
-
-    # Render chat
-    st.markdown("<div class='chat-wrap'>", unsafe_allow_html=True)
-    for msg in st.session_state.chat[-30:]:
+    # Show last 25 messages
+    for msg in st.session_state.chat[-25:]:
         role = msg["role"]
-        cls = "user" if role == "user" else "bot"
         who = "أنتِ" if role == "user" else "المساعد"
-        st.markdown(
-            f"""
-            <div class="bubble {cls}">
-                {msg["content"]}
-                <div class="meta">{who} • {msg["ts"]}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown(f"**{who}:** {msg['content']}")
+
     st.markdown("</div>", unsafe_allow_html=True)
 
-    user_msg = st.text_area("✍️ اكتب/ي رسالتك:", height=120, placeholder="اسأليني أي شيء…")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    user_msg = st.text_area("✍️ اكتبي رسالتك:", height=120, placeholder="اسألي أي شيء…")
     send = st.button("🚀 إرسال")
 
     st.markdown("</div>", unsafe_allow_html=True)
@@ -302,91 +318,111 @@ if mode == "💬 Chatbot محادثة":
 
             with st.spinner("⏳ جاري الرد..."):
                 try:
-                    messages = [{"role": "system", "content": "أنت مساعد عربي محترف، واضح ومختصر ومفيد."}]
-                    # Include last context (limited)
+                    messages = [{"role": "system", "content": "أنت مساعد عربي محترف، واضح ومنظم ومفيد."}]
                     for m in st.session_state.chat[-12:]:
                         messages.append({"role": m["role"], "content": m["content"]})
 
-                    resp = client.chat.completions.create(
-                        model=model,
-                        messages=messages,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                    )
+                    resp = ask_llm(messages)
                     answer = resp.choices[0].message.content.strip()
+
                     st.session_state.chat.append({"role": "assistant", "content": answer, "ts": datetime.now().strftime("%Y-%m-%d %H:%M")})
                     st.session_state.last_result = answer
                     st.rerun()
                 except Exception as e:
                     st.error(f"حدث خطأ أثناء الاتصال بالنموذج: {e}")
 
-    # Actions for last result
-    if st.session_state.last_result:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("### 🧾 آخر رد")
-        st.markdown(f"<div class='result'>{st.session_state.last_result}</div>", unsafe_allow_html=True)
-
-        colA, colB, colC = st.columns(3)
-        with colA:
-            clipboard_button(st.session_state.last_result, "📋 نسخ الرد")
-        with colB:
-            pdf_bytes = make_pdf("Smart AI Assistant — Result", st.session_state.last_result)
-            st.download_button("⬇️ تحميل PDF", data=pdf_bytes, file_name="result.pdf", mime="application/pdf", use_container_width=True)
-        with colC:
-            docx_bytes = make_docx("Smart AI Assistant — Result", st.session_state.last_result)
-            st.download_button("⬇️ تحميل Word", data=docx_bytes, file_name="result.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document", use_container_width=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- NLP TOOLS MODE ----------
-else:
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
+# =========================
+# TAB: Tools
+# =========================
+with tab_tools:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown("### 🧠 أدوات NLP")
 
     task = st.selectbox("اختاري المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
     user_text = st.text_area("📄 أدخلي النص هنا:", height=180, placeholder="الصقي نص/خبر/مقال هنا...")
-    run = st.button("🚀 تنفيذ المهمة")
 
+    run = st.button("🚀 تنفيذ")
+    st.markdown('<p class="hint">ملاحظة: تم حذف (الإبداع) و(طول الرد) حسب طلبك لتكون النتائج ثابتة وواضحة.</p>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
     if run:
         if not user_text.strip():
             st.warning("رجاءً أدخلي نص أولاً ✍️")
         else:
-            prompt = build_prompt(task, user_text.strip())
-
+            prompt = build_tool_prompt(task, user_text.strip())
             with st.spinner("⏳ جاري المعالجة..."):
                 try:
-                    resp = client.chat.completions.create(
-                        model=model,
-                        messages=[
-                            {"role": "system", "content": "أنت مساعد عربي محترف. كن واضحاً ومنظماً."},
-                            {"role": "user", "content": prompt},
-                        ],
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                    )
+                    resp = ask_llm([
+                        {"role": "system", "content": "أنت مساعد عربي محترف. كن واضحاً ومنظماً."},
+                        {"role": "user", "content": prompt},
+                    ])
                     result = resp.choices[0].message.content.strip()
                     st.session_state.last_result = result
 
-                    st.markdown("<div class='card'>", unsafe_allow_html=True)
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
                     st.markdown("### ✅ النتيجة")
                     st.markdown(f"<div class='result'>{result}</div>", unsafe_allow_html=True)
-
-                    colA, colB, colC = st.columns(3)
-                    with colA:
-                        clipboard_button(result, "📋 نسخ النتيجة")
-                    with colB:
-                        pdf_bytes = make_pdf("Smart AI Assistant — Result", result)
-                        st.download_button("⬇️ تحميل PDF", data=pdf_bytes, file_name="result.pdf", mime="application/pdf", use_container_width=True)
-                    with colC:
-                        docx_bytes = make_docx("Smart AI Assistant — Result", result)
-                        st.download_button("⬇️ تحميل Word", data=docx_bytes, file_name="result.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document", use_container_width=True)
-
                     st.markdown("</div>", unsafe_allow_html=True)
 
                 except Exception as e:
                     st.error(f"حدث خطأ أثناء الاتصال بالنموذج: {e}")
 
+# =========================
+# TAB: Export
+# =========================
+with tab_export:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("### ⬇️ تنزيل / نسخ آخر نتيجة")
+
+    if not st.session_state.last_result:
+        st.info("لا يوجد نتيجة بعد. شغّلي الدردشة أو أدوات NLP أولاً.")
+    else:
+        st.markdown(f"<div class='result'>{st.session_state.last_result}</div>", unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            clipboard_button(st.session_state.last_result, "📋 نسخ")
+        with col2:
+            pdf_bytes = make_pdf_ar("Smart AI Assistant — Result", st.session_state.last_result)
+            st.download_button(
+                "⬇️ PDF",
+                data=pdf_bytes,
+                file_name="result_ar.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+        with col3:
+            docx_bytes = make_docx("Smart AI Assistant — Result", st.session_state.last_result)
+            st.download_button(
+                "⬇️ Word",
+                data=docx_bytes,
+                file_name="result.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                use_container_width=True
+            )
+
+        st.markdown('<p class="hint">إذا ما ضفتي خط Amiri داخل fonts/ قد لا يظهر العربي في PDF بشكل مثالي.</p>', unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# =========================
+# TAB: Settings (top icons, no sidebar)
+# =========================
+with tab_settings:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("### ⚙️ إعدادات سريعة")
+
+    if st.button("🧹 مسح المحادثة", use_container_width=True):
+        st.session_state.chat = []
+        st.session_state.last_result = ""
+        st.rerun()
+
+    st.markdown(
+        "<p class='hint'>النموذج الحالي مضبوط من Secrets. "
+        "إذا تريدين تغييره: ضيفي OPENROUTER_MODEL_DEFAULT في Secrets.</p>",
+        unsafe_allow_html=True
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+
 st.markdown("---")
-st.caption("💡 ملاحظة: إذا تريدين PDF عربي مضبوط 100%، أضيف لك خط عربي داخل المشروع (Amiri) ونفعّله بالكود.")
+st.caption("واجهة فاتحة + خط أوضح + Top Bar للموبايل ✅")
