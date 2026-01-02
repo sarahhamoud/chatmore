@@ -279,18 +279,16 @@ if page == "دردشة":
     st.markdown("### المحادثة")
 
     if not st.session_state.chat:
-        st.info("ابدئي بسؤال…")
+      #  st.info("ابدئي بسؤال…")
 
     for m in st.session_state.chat[-20:]:
         who = "أنتِ" if m["role"] == "user" else "المساعد"
         bubble_class = "bubble bubble-user" if m["role"] == "user" else "bubble bubble-ass"
         st.markdown(f"<div class='{bubble_class}'><b>{who}:</b><br>{m['content']}</div>", unsafe_allow_html=True)
 
-    st.markdown('</div></div>', unsafe_allow_html=True)
 
     user_msg = st.text_area("اكتبي رسالتك:", height=140, placeholder="اسألي أي شيء…")
     send = st.button("إرسال")
-    st.markdown('</div></div>', unsafe_allow_html=True)
 
     if send:
         if not user_msg.strip():
@@ -308,7 +306,6 @@ if page == "دردشة":
                 st.rerun()
 
 elif page == "أدوات":
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### أدوات NLP")
 
     task = st.selectbox("اختاري المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
@@ -337,13 +334,11 @@ elif page == "أدوات":
                 result = resp.choices[0].message.content.strip()
                 st.session_state.last_result = result
 
-            st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
             st.markdown("### النتيجة")
             st.markdown(f"<div class='result'>{result}</div>", unsafe_allow_html=True)
             st.markdown('</div></div>', unsafe_allow_html=True)
 
 elif page == "تنزيل":
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### تنزيل آخر نتيجة")
 
     if not st.session_state.last_result:
@@ -361,11 +356,11 @@ elif page == "تنزيل":
     st.markdown('</div></div>', unsafe_allow_html=True)
 
 else:
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### إعدادات")
     if st.button(" مسح المحادثة", use_container_width=True):
         st.session_state.chat = []
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
 
