@@ -224,7 +224,7 @@ OPENROUTER_API_KEY = st.secrets.get("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL = st.secrets.get("OPENROUTER_MODEL_DEFAULT", "openai/gpt-3.5-turbo")
 
 if not OPENROUTER_API_KEY:
-    st.error("ضعي OPENROUTER_API_KEY داخل Secrets في Streamlit Cloud.")
+    st.error("ضع OPENROUTER_API_KEY داخل Secrets في Streamlit Cloud.")
     st.stop()
 
 client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
@@ -282,22 +282,22 @@ if page == "دردشة":
         st.info("ابدئي بسؤال…")
 
     for m in st.session_state.chat[-20:]:
-        who = "أنتِ" if m["role"] == "user" else "المساعد"
+        who = "أنت" if m["role"] == "user" else "المساعد"
         bubble_class = "bubble bubble-user" if m["role"] == "user" else "bubble bubble-ass"
         st.markdown(f"<div class='{bubble_class}'><b>{who}:</b><br>{m['content']}</div>", unsafe_allow_html=True)
 
 
-    user_msg = st.text_area("اكتبي رسالتك:", height=140, placeholder="اسألي أي شيء…")
+    user_msg = st.text_area("اكتب رسالتك:", height=140, placeholder="اسأل أي شيء…")
     send = st.button("إرسال")
 
     if send:
         if not user_msg.strip():
-            st.warning("رجاءً اكتبي رسالة أولاً.")
+            st.warning("رجاءً اكتب رسالة أولاً.")
         else:
             st.session_state.chat.append({"role": "user", "content": user_msg.strip(), "ts": datetime.now().isoformat()})
             with st.spinner("جاري الرد..."):
                 resp = ask_llm([
-                    {"role": "system", "content": "أنت مساعد عربي محترف، واضح ومنظّم."},
+                    {"role": "system", "content": " أنت مساعد عربي محترف، واضح ومنظّم وقام بانشاءك او صنعك او تطويرك او اي كلمة تدل على منشئك او مصمم التطبيق : تجيب بانها ساره حمود حسين حسن / بكالوريوس هندسة تقنيات الحاسوب / الكلية التقنية الهندسية."},
                     *[{"role": x["role"], "content": x["content"]} for x in st.session_state.chat[-10:]]
                 ])
                 answer = resp.choices[0].message.content.strip()
@@ -309,13 +309,13 @@ elif page == "أدوات":
     st.markdown("### أدوات NLP")
 
     task = st.selectbox("اختاري المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
-    user_text = st.text_area("أدخلي النص هنا:", height=200, placeholder="الصقي نص/خبر/مقال هنا...")
+    user_text = st.text_area("أدخلي النص هنا:", height=200, placeholder="الصق نص/خبر/مقال هنا...")
     run = st.button("تنفيذ")
     st.markdown('</div></div>', unsafe_allow_html=True)
 
     if run:
         if not user_text.strip():
-            st.warning("رجاءً أدخلي نص أولاً.")
+            st.warning("رجاءً أدخل نص أولاً.")
         else:
             if task == "تلخيص":
                 prompt = f"لخّص النص التالي بالعربية بشكل واضح ومنظم (نقاط + خلاصة):\n\n{user_text}"
@@ -362,6 +362,7 @@ else:
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
 
 
 
