@@ -10,7 +10,7 @@ import os
 # =========================
 st.set_page_config(
     page_title="Smart AI Assistant",
-    page_icon="🤖",
+    page_icon=" ",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
@@ -169,7 +169,7 @@ def make_docx(title, content):
 # Tabs
 # =========================
 tab_chat, tab_tools, tab_export, tab_settings = st.tabs(
-    ["💬 دردشة", "🛠️ أدوات", "⬇️ تنزيل", "⚙️ إعدادات"]
+    [" دردشة", " أدوات", " تنزيل", " إعدادات"]
 )
 
 # =========================
@@ -177,7 +177,7 @@ tab_chat, tab_tools, tab_export, tab_settings = st.tabs(
 # =========================
 with tab_chat:
     st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
-    st.markdown("### 💬 المحادثة")
+    st.markdown("###  المحادثة")
 
     for msg in st.session_state.chat[-20:]:
         who = "أنتِ" if msg["role"] == "user" else "المساعد"
@@ -232,7 +232,7 @@ with tab_export:
     if st.session_state.last_result:
         docx = make_docx("Smart AI Assistant", st.session_state.last_result)
         st.download_button(
-            "⬇️ تحميل Word",
+            " تحميل Word",
             data=docx,
             file_name="result.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -245,7 +245,8 @@ with tab_export:
 # Settings
 # =========================
 with tab_settings:
-    if st.button("🗑️ مسح المحادثة", use_container_width=True):
+    if st.button(" مسح المحادثة", use_container_width=True):
         st.session_state.chat = []
         st.session_state.last_result = ""
         st.rerun()
+
