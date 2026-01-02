@@ -278,7 +278,7 @@ st.markdown(
     <div class="topbar">
      <p class="brand">المساعد الذكي Smart AI Assistant</p>
       <p class="brand"> Sarah Hamoud Hussien   </p>
-      <p class="sub">Chatbot + تلخيص + صياغة + ترجمة + مشاعر + تحميل </p>
+      
     </div>
     """,
     unsafe_allow_html=True
@@ -376,19 +376,19 @@ with tab_export:
     else:
         st.markdown(f"<div class='result'>{st.session_state.last_result}</div>", unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns(3)
+        col1, col2= st.columns(2)
         with col1:
             clipboard_button(st.session_state.last_result, " نسخ")
+    #    with col2:
+     #       pdf_bytes = make_pdf_ar("Smart AI Assistant — Result", st.session_state.last_result)
+       #     st.download_button(
+                #" PDF",
+         #       data=pdf_bytes,
+           #     file_name="result_ar.pdf",
+            #    mime="application/pdf",
+            #    use_container_width=True
+          #  )
         with col2:
-            pdf_bytes = make_pdf_ar("Smart AI Assistant — Result", st.session_state.last_result)
-            st.download_button(
-                " PDF",
-                data=pdf_bytes,
-                file_name="result_ar.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-        with col3:
             docx_bytes = make_docx("Smart AI Assistant — Result", st.session_state.last_result)
             st.download_button(
                 " Word",
@@ -415,6 +415,7 @@ with tab_settings:
 
     
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
