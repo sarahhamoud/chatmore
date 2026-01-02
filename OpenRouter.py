@@ -279,7 +279,7 @@ if page == "دردشة":
     st.markdown("### المحادثة")
 
     if not st.session_state.chat:
-        st.info("ابدئي بسؤال…")
+        st.info("ابدء بسؤالي…")
 
     for m in st.session_state.chat[-20:]:
         who = "أنت" if m["role"] == "user" else "المساعد"
@@ -308,7 +308,7 @@ if page == "دردشة":
 elif page == "أدوات":
     st.markdown("### أدوات NLP")
 
-    task = st.selectbox("اختاري المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
+    task = st.selectbox("اختر المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
     user_text = st.text_area("أدخلي النص هنا:", height=200, placeholder="الصق نص/خبر/مقال هنا...")
     run = st.button("تنفيذ")
     st.markdown('</div></div>', unsafe_allow_html=True)
@@ -362,6 +362,7 @@ else:
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
 
 
 
