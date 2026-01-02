@@ -292,7 +292,7 @@ tab_chat, tab_tools, tab_export, tab_settings = st.tabs([" دردشة", " أدو
 # =========================
 with tab_chat:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### 💬 محادثة")
+    st.markdown("###  محادثة")
 
     # Show last 25 messages
     for msg in st.session_state.chat[-25:]:
@@ -316,7 +316,7 @@ with tab_chat:
 
             with st.spinner(" جاري الرد..."):
                 try:
-                    messages = [{"role": "system", "content": "أنت مساعد عربي محترف، واضح ومنظم ومفيد."}]
+                    messages = [{"role": "system", "content": " أنت مساعد عربي محترف، واضح ومنظم ومفيد والذي قام بانشائك ساره حمود حسين  بكالوريوس هندسة تقنيات الحاسوب ."}]
                     for m in st.session_state.chat[-12:]:
                         messages.append({"role": m["role"], "content": m["content"]})
 
@@ -337,10 +337,9 @@ with tab_tools:
     st.markdown("###  أدوات NLP")
 
     task = st.selectbox("اختاري المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
-    user_text = st.text_area("📄 أدخلي النص هنا:", height=180, placeholder="الصقي نص/خبر/مقال هنا...")
+    user_text = st.text_area(" أدخلي النص هنا:", height=180, placeholder="الصقي نص/خبر/مقال هنا...")
 
     run = st.button(" تنفيذ")
-    st.markdown('<p class="hint">ملاحظة: تم حذف (الإبداع) و(طول الرد) حسب طلبك لتكون النتائج ثابتة وواضحة.</p>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
     if run:
@@ -358,7 +357,7 @@ with tab_tools:
                     st.session_state.last_result = result
 
                     st.markdown('<div class="card">', unsafe_allow_html=True)
-                    st.markdown("### ✅ النتيجة")
+                    st.markdown("###  النتيجة")
                     st.markdown(f"<div class='result'>{result}</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -399,7 +398,6 @@ with tab_export:
                 use_container_width=True
             )
 
-        st.markdown('<p class="hint">إذا ما ضفتي خط Amiri داخل fonts/ قد لا يظهر العربي في PDF بشكل مثالي.</p>', unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -415,13 +413,8 @@ with tab_settings:
         st.session_state.last_result = ""
         st.rerun()
 
-    st.markdown(
-        "<p class='hint'>النموذج الحالي مضبوط من Secrets. "
-        "إذا تريدين تغييره: ضيفي OPENROUTER_MODEL_DEFAULT في Secrets.</p>",
-        unsafe_allow_html=True
-    )
+    
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("---")
-st.caption("واجهة فاتحة + خط أوضح + Top Bar للموبايل ")
+
 
