@@ -279,7 +279,7 @@ if page == "دردشة":
     st.markdown("### المحادثة")
 
     if not st.session_state.chat:
-      #  st.info("ابدئي بسؤال…")
+        st.info("ابدئي بسؤال…")
 
     for m in st.session_state.chat[-20:]:
         who = "أنتِ" if m["role"] == "user" else "المساعد"
@@ -362,5 +362,6 @@ else:
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
 
 
