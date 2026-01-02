@@ -48,7 +48,7 @@ hr, [data-testid="stDivider"]{display:none !important;}
 }
 
 /* =========================
-   TOPBAR (fixed, not blocking)
+   TOPBAR - GLASS (Transparent)
 ========================= */
 .app-topbar{
   position: fixed;
@@ -57,28 +57,41 @@ hr, [data-testid="stDivider"]{display:none !important;}
   transform: translateX(-50%);
   width: min(980px, calc(100% - 18px));
   z-index: 9999;
-  background: linear-gradient(135deg,#14b8a6,#facc15,#fb923c);
-  border-radius: 20px;
-  padding: 12px 14px;
-  box-shadow: 0 16px 34px rgba(0,0,0,.18);
+
+  /* Glass effect */
+  background: rgba(255, 255, 255, 0.45);   /* شفاف */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 22px;
+  padding: 12px 16px;
+
+  border: 1px solid rgba(255,255,255,.6);
+  box-shadow: 
+    0 16px 34px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.5);
 }
 
-/* Brand text */
+/* Title */
 .app-title{
-  color:#fff;
   font-weight: 1000;
   font-size: 22px;
-  margin:0;
-  line-height:1.2;
-  text-shadow: 0 2px 7px rgba(0,0,0,.25);
+  margin: 0;
+  line-height: 1.2;
+  color: #0f172a;     /* واضح فوق الشفافية */
 }
+
+/* Name */
 .app-sub{
-  color:#fff7ed;
-  font-weight: 800;
-  font-size: 15px;
   margin: 2px 0 0 0;
-  opacity: .95;
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f766e;     /* فيروزي هادئ */
 }
+
+/* Mobile */
+@media (max-widt
+
 
 /* =========================
    Toolbar (radio horizontal) styled as pills
@@ -264,7 +277,6 @@ st.session_state.page = st.radio(
 page = st.session_state.page
 
 if page == " دردشة":
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### المحادثة")
 
     if not st.session_state.chat:
@@ -277,7 +289,6 @@ if page == " دردشة":
 
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     user_msg = st.text_area("اكتبي رسالتك:", height=140, placeholder="اسألي أي شيء…")
     send = st.button("إرسال")
     st.markdown('</div></div>', unsafe_allow_html=True)
@@ -360,3 +371,4 @@ else:  # Settings
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
