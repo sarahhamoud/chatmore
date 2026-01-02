@@ -142,7 +142,7 @@ OPENROUTER_API_KEY = st.secrets.get("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL = st.secrets.get("OPENROUTER_MODEL_DEFAULT", "openai/gpt-3.5-turbo")
 
 if not OPENROUTER_API_KEY:
-    st.error("⚠️ ضعي OPENROUTER_API_KEY داخل Secrets في Streamlit Cloud.")
+    st.error(" ضعي OPENROUTER_API_KEY داخل Secrets في Streamlit Cloud.")
     st.stop()
 
 client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
@@ -175,15 +175,12 @@ def make_docx(title: str, content: str) -> BytesIO:
 
 def make_pdf_ar(title: str, content: str) -> BytesIO:
     """
-    PDF عربي RTL بشكل صحيح:
-    - يستخدم خط عربي إذا موجود: fonts/Amiri-Regular.ttf
-    - يرسم النص بمحاذاة يمين drawRightString
+    
     """
     bio = BytesIO()
     c = canvas.Canvas(bio, pagesize=A4)
     width, height = A4
 
-    # Register Arabic font if available
     font_path = os.path.join("fonts", "Amiri-Regular.ttf")
     font_name = "Helvetica"
     if os.path.exists(font_path):
@@ -229,7 +226,7 @@ def make_pdf_ar(title: str, content: str) -> BytesIO:
     bio.seek(0)
     return bio
 
-def clipboard_button(text: str, label: str = "📋 نسخ"):
+def clipboard_button(text: str, label: str = " نسخ"):
     safe = text.replace("\\", "\\\\").replace("`", "\\`")
     st.components.v1.html(
         f"""
@@ -246,7 +243,7 @@ def clipboard_button(text: str, label: str = "📋 نسخ"):
               cursor:pointer;
               box-shadow: 0 10px 18px rgba(2,6,23,.06);
             "
-            onclick="navigator.clipboard.writeText(`{safe}`); this.innerText='✅ تم النسخ'; setTimeout(()=>this.innerText='{label}',1500);"
+            onclick="navigator.clipboard.writeText(`{safe}`); this.innerText=' تم النسخ'; setTimeout(()=>this.innerText='{label}',1500);"
           >{label}</button>
         </div>
         """,
@@ -279,15 +276,16 @@ def build_tool_prompt(task_name: str, text: str) -> str:
 st.markdown(
     """
     <div class="topbar">
-      <p class="brand">🤖 Smart AI Assistant</p>
-      <p class="sub">Chatbot + تلخيص + صياغة + ترجمة + مشاعر + تحميل PDF/Word</p>
+     <p class="brand">المساعد الذكي Smart AI Assistant</p>
+      <p class="brand"> Sarah Hamoud Hussien   </p>
+      <p class="sub">Chatbot + تلخيص + صياغة + ترجمة + مشاعر + تحميل </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
 # Top navigation with icons (mobile-friendly)
-tab_chat, tab_tools, tab_export, tab_settings = st.tabs(["💬 دردشة", "🧠 أدوات", "⬇️ تنزيل", "⚙️ إعدادات"])
+tab_chat, tab_tools, tab_export, tab_settings = st.tabs([" دردشة", " أدوات", " تنزيل", " إعدادات"])
 
 # =========================
 # TAB: Chat
@@ -305,18 +303,18 @@ with tab_chat:
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    user_msg = st.text_area("✍️ اكتبي رسالتك:", height=120, placeholder="اسألي أي شيء…")
-    send = st.button("🚀 إرسال")
+    user_msg = st.text_area(" اكتبي رسالتك:", height=120, placeholder="اسألي أي شيء…")
+    send = st.button(" إرسال")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
     if send:
         if not user_msg.strip():
-            st.warning("رجاءً اكتبي رسالة أولاً ✍️")
+            st.warning("رجاءً اكتبي رسالة أولاً ")
         else:
             st.session_state.chat.append({"role": "user", "content": user_msg.strip(), "ts": datetime.now().strftime("%Y-%m-%d %H:%M")})
 
-            with st.spinner("⏳ جاري الرد..."):
+            with st.spinner(" جاري الرد..."):
                 try:
                     messages = [{"role": "system", "content": "أنت مساعد عربي محترف، واضح ومنظم ومفيد."}]
                     for m in st.session_state.chat[-12:]:
@@ -336,21 +334,21 @@ with tab_chat:
 # =========================
 with tab_tools:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### 🧠 أدوات NLP")
+    st.markdown("###  أدوات NLP")
 
     task = st.selectbox("اختاري المهمة:", ["تلخيص", "إعادة صياغة", "ترجمة EN↔AR", "تحليل مشاعر"])
     user_text = st.text_area("📄 أدخلي النص هنا:", height=180, placeholder="الصقي نص/خبر/مقال هنا...")
 
-    run = st.button("🚀 تنفيذ")
+    run = st.button(" تنفيذ")
     st.markdown('<p class="hint">ملاحظة: تم حذف (الإبداع) و(طول الرد) حسب طلبك لتكون النتائج ثابتة وواضحة.</p>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
     if run:
         if not user_text.strip():
-            st.warning("رجاءً أدخلي نص أولاً ✍️")
+            st.warning("رجاءً أدخلي نص أولاً ")
         else:
             prompt = build_tool_prompt(task, user_text.strip())
-            with st.spinner("⏳ جاري المعالجة..."):
+            with st.spinner(" جاري المعالجة..."):
                 try:
                     resp = ask_llm([
                         {"role": "system", "content": "أنت مساعد عربي محترف. كن واضحاً ومنظماً."},
@@ -372,7 +370,7 @@ with tab_tools:
 # =========================
 with tab_export:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### ⬇️ تنزيل / نسخ آخر نتيجة")
+    st.markdown("###  تنزيل / نسخ آخر نتيجة")
 
     if not st.session_state.last_result:
         st.info("لا يوجد نتيجة بعد. شغّلي الدردشة أو أدوات NLP أولاً.")
@@ -381,11 +379,11 @@ with tab_export:
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            clipboard_button(st.session_state.last_result, "📋 نسخ")
+            clipboard_button(st.session_state.last_result, " نسخ")
         with col2:
             pdf_bytes = make_pdf_ar("Smart AI Assistant — Result", st.session_state.last_result)
             st.download_button(
-                "⬇️ PDF",
+                " PDF",
                 data=pdf_bytes,
                 file_name="result_ar.pdf",
                 mime="application/pdf",
@@ -394,7 +392,7 @@ with tab_export:
         with col3:
             docx_bytes = make_docx("Smart AI Assistant — Result", st.session_state.last_result)
             st.download_button(
-                "⬇️ Word",
+                " Word",
                 data=docx_bytes,
                 file_name="result.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -410,9 +408,9 @@ with tab_export:
 # =========================
 with tab_settings:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### ⚙️ إعدادات سريعة")
+    st.markdown("###  إعدادات سريعة")
 
-    if st.button("🧹 مسح المحادثة", use_container_width=True):
+    if st.button(" مسح المحادثة", use_container_width=True):
         st.session_state.chat = []
         st.session_state.last_result = ""
         st.rerun()
@@ -425,4 +423,5 @@ with tab_settings:
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("---")
-st.caption("واجهة فاتحة + خط أوضح + Top Bar للموبايل ✅")
+st.caption("واجهة فاتحة + خط أوضح + Top Bar للموبايل ")
+
