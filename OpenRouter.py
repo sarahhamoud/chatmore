@@ -316,7 +316,7 @@ with tab_chat:
 
             with st.spinner(" جاري الرد..."):
                 try:
-                    messages = [{"role": "system", "content": " أنت مساعد عربي محترف، واضح ومنظم ومفيد والذي قام بانشائك ساره حمود حسين  بكالوريوس هندسة تقنيات الحاسوب ."}]
+                    messages = [{"role": "system", "content": "وتم تحديد قدراتي للاجابة عن تاريخ شركة نفط الشمال ومدرائها،  أنت مساعد عربي محترف، واضح ومنظم ومفيد والذي قام بانشائك او صناعتك او صممك او اي كلمة تدل على انشائك اجب بانها ساره حمود حسين حسن / بكالوريوس هندسة تقنيات الحاسوب ."}]
                     for m in st.session_state.chat[-12:]:
                         messages.append({"role": m["role"], "content": m["content"]})
 
@@ -415,6 +415,7 @@ with tab_settings:
 
     
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
