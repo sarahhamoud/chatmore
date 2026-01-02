@@ -30,107 +30,142 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    html, body, [data-testid="stAppViewContainer"]{
-        direction: RTL; text-align: right;
-        font-family: "Tajawal","Cairo","Tahoma","Arial",sans-serif;
-    }
-    [data-testid="stAppViewContainer"]{
-        background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 60%, #f2f4f9 100%);
-        color: #0f172a;
-    }
-    .block-container{
-        padding-top: .8rem;
-        padding-bottom: 2rem;
-        max-width: 900px;
-    }
-    @media (max-width: 520px){
-        .block-container {padding-left: 1rem; padding-right: 1rem;}
-    }
+/* =========================
+   Global RTL + Font
+========================= */
+html, body, [data-testid="stAppViewContainer"]{
+    direction: RTL;
+    text-align: right;
+    font-family: "Tajawal","Cairo","Tahoma","Arial",sans-serif;
+}
 
-    /* Top bar (sticky) */
-    .topbar{
-        position: sticky;
-        top: 0;
-        z-index: 999;
-        background: rgba(255,255,255,.92);
-        border: 1px solid rgba(15,23,42,.08);
-        border-radius: 18px;
-        padding: 10px 12px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 22px rgba(2,6,23,.06);
-        margin-bottom: 12px;
-    }
-    .brand{
-        font-weight: 900;
-        font-size: 20px;
-        margin: 0;
-        line-height: 1.2;
-    }
-    .sub{
-        margin: 0;
-        font-size: 13px;
-        color: rgba(15,23,42,.70);
-    }
+/* =========================
+   Background (Soft Pro)
+========================= */
+[data-testid="stAppViewContainer"]{
+    background: linear-gradient(
+        180deg,
+        #f0fdfa 0%,      /* فيروزي فاتح */
+        #fffbeb 55%,     /* أصفر ناعم */
+        #fff7ed 100%     /* برتقالي خفيف */
+    );
+    color: #0f172a;
+}
 
-    /* Cards */
-    .card{
-        background: #ffffff;
-        border: 1px solid rgba(15,23,42,.10);
-        box-shadow: 0 12px 26px rgba(2,6,23,.06);
-        border-radius: 18px;
-        padding: 16px;
-        margin-bottom: 12px;
-    }
+.block-container{
+    padding-top: 1rem;
+    padding-bottom: 2.5rem;
+    max-width: 950px;
+}
 
-    /* Inputs bigger */
-    textarea, input, [data-baseweb="select"] > div{
-        border-radius: 14px !important;
-        background: #ffffff !important;
-        border: 1px solid rgba(15,23,42,.12) !important;
-        color: #0f172a !important;
-        font-size: 16px !important;
-    }
+/* =========================
+   TOP BAR (BIGGER + COLORFUL)
+========================= */
+.topbar{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: linear-gradient(
+        135deg,
+        #14b8a6,   /* فيروزي */
+        #facc15,   /* أصفر */
+        #fb923c    /* برتقالي */
+    );
+    border-radius: 22px;
+    padding: 18px 20px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.18);
+    margin-bottom: 16px;
+}
 
-    label{
-        color:#0f172a !important;
-        font-weight: 800;
-        font-size: 16px !important;
-    }
+/* Title */
+.brand{
+    font-weight: 900;
+    font-size: 26px;      /* ⬅️ كبرنا الخط */
+    margin: 0;
+    line-height: 1.3;
+    color: #ffffff;
+    text-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
 
-    /* Buttons */
-    .stButton > button{
-        width: 100%;
-        border-radius: 14px;
-        padding: 0.8rem 1rem;
-        font-weight: 900;
-        border: 1px solid rgba(15,23,42,.12);
-        background: linear-gradient(135deg, #2563eb, #22c55e);
-        color: white;
-        font-size: 16px;
-    }
+/* Subtitle / Name */
+.sub{
+    margin: 0;
+    font-size: 17px;      /* ⬅️ كبرنا */
+    color: #fff7ed;
+    font-weight: 700;
+}
 
-    /* Result */
-    .result{
-        background: #f8fafc;
-        border: 1px solid rgba(15,23,42,.10);
-        border-radius: 16px;
-        padding: 14px;
-        white-space: pre-wrap;
-        line-height: 2.0;
-        font-size: 16px;
-    }
+/* =========================
+   Cards
+========================= */
+.card{
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 12px 28px rgba(0,0,0,.08);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
+}
 
-    .hint{
-        color: rgba(15,23,42,.70);
-        font-size: 14px;
-    }
+/* =========================
+   Inputs (Bigger & Clear)
+========================= */
+textarea, input, [data-baseweb="select"] > div{
+    border-radius: 16px !important;
+    border: 1px solid rgba(0,0,0,.15) !important;
+    font-size: 17px !important;
+}
 
-    /* Make tab labels bigger (mobile) */
-    button[data-baseweb="tab"]{
-        font-size: 15px !important;
-        font-weight: 800 !important;
-    }
-    </style>
+/* Labels */
+label{
+    font-size: 17px !important;
+    font-weight: 900;
+    color: #0f172a !important;
+}
+
+/* =========================
+   Buttons (Orange Accent)
+========================= */
+.stButton > button{
+    width: 100%;
+    border-radius: 16px;
+    padding: 0.9rem 1.1rem;
+    font-weight: 900;
+    font-size: 17px;
+    background: linear-gradient(135deg, #fb923c, #facc15);
+    color: #1f2933;
+    border: none;
+    box-shadow: 0 10px 22px rgba(251,146,60,.35);
+}
+
+/* =========================
+   Result Box
+========================= */
+.result{
+    background: #f0fdfa;
+    border: 1px solid #14b8a6;
+    border-radius: 18px;
+    padding: 16px;
+    font-size: 17px;
+    line-height: 2.1;
+}
+
+/* =========================
+   Tabs (Mobile Friendly)
+========================= */
+button[data-baseweb="tab"]{
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    color: #0f172a;
+}
+
+/* Mobile tweaks */
+@media (max-width: 520px){
+    .brand{ font-size: 22px; }
+    .sub{ font-size: 15px; }
+}
+</style>
+
     """,
     unsafe_allow_html=True
 )
@@ -415,6 +450,7 @@ with tab_settings:
 
     
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
