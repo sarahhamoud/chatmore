@@ -276,7 +276,6 @@ page = st.session_state.page
 # Pages
 # =========================
 if page == "دردشة":
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     st.markdown("### المحادثة")
 
     if not st.session_state.chat:
@@ -289,7 +288,6 @@ if page == "دردشة":
 
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="grad-border"><div class="grad-inner">', unsafe_allow_html=True)
     user_msg = st.text_area("اكتبي رسالتك:", height=140, placeholder="اسألي أي شيء…")
     send = st.button("إرسال")
     st.markdown('</div></div>', unsafe_allow_html=True)
@@ -370,3 +368,4 @@ else:
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
