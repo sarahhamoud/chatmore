@@ -57,6 +57,30 @@ hr, [data-testid="stDivider"]{display:none !important;}
   transform: translateX(-50%);
   width: min(980px, calc(100% - 18px));
   z-index: 9999;
+/* =========================
+   HIDE STREAMLIT DEFAULT TOP BAR
+   (Run / Share / Menu)
+========================= */
+
+/* الشريط العلوي بالكامل */
+header[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* شريط الأدوات الصغير (⋮) */
+[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+/* زر Share */
+[data-testid="stShareButton"] {
+    display: none !important;
+}
+
+/* المساحة اللي يتركها الشريط بعد الإخفاء */
+[data-testid="stAppViewContainer"] {
+    padding-top: 0rem !important;
+}
 
   /* Glass effect */
   background: rgba(255, 255, 255, 0.45);   /* شفاف */
@@ -371,4 +395,5 @@ else:  # Settings
         st.session_state.last_result = ""
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
+
 
